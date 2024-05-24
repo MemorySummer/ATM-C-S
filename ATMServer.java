@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.*;
+import java.time.LocalDateTime;
 import java.util.logging.*;
 import java.sql.*;
 
@@ -75,7 +76,7 @@ public class ATMServer {
 
                         if (rs.next()) {
 
-                            out.println("500 AUTH REQUIRE");
+                            out.println("500 AUTH REQUIRED!");
                             Usernow =tokens[1];
 
                         } else {
@@ -93,6 +94,12 @@ public class ATMServer {
                         if(rs.next()){
 
                             out.println("525 OK!");
+                            LocalDateTime currentTime = LocalDateTime.now();
+                            String data = currentTime+":用户"+Usernow+"账号验证成功！\n";
+                            File file = new File("message.txt");
+                            FileWriter fileWritter = new FileWriter(file.getName(),true);
+                            fileWritter.write(data);
+                            fileWritter.close();
 
                         } else {
 
@@ -107,6 +114,12 @@ public class ATMServer {
                         rs.next();
                         double balance = rs.getDouble("Balance");
                         out.println("AMNT: "+balance);
+                        LocalDateTime currentTime = LocalDateTime.now();
+                        String data = currentTime+":用户"+Usernow+"查询了余额\n";
+                        File file = new File("message.txt");
+                        FileWriter fileWritter = new FileWriter(file.getName(),true);
+                        fileWritter.write(data);
+                        fileWritter.close();
 
                     } else if (tokens[0].equals("WDRA")) {
 
@@ -122,7 +135,12 @@ public class ATMServer {
 
                             out.println("525 OK!");
                             int rs1 = stmt.executeUpdate("UPDATE client SET Balance = Balance - "+ withdrawnumber + "WHERE UserID = '" + Usernow + "'");
-
+                            LocalDateTime currentTime = LocalDateTime.now();
+                            String data = currentTime+":用户"+Usernow+"取出了"+withdrawamount+"元\n";
+                            File file = new File("message.txt");
+                            FileWriter fileWritter = new FileWriter(file.getName(),true);
+                            fileWritter.write(data);
+                            fileWritter.close();
                         } else {
 
                             out.println("401 ERROR!");
@@ -131,6 +149,12 @@ public class ATMServer {
                     } else if (tokens[0].equals("BYE")) {
 
                         out.println("BYE");
+                        LocalDateTime currentTime = LocalDateTime.now();
+                        String data = currentTime+":用户"+Usernow+"登出成功\n";
+                        File file = new File("message.txt");
+                        FileWriter fileWritter = new FileWriter(file.getName(),true);
+                        fileWritter.write(data);
+                        fileWritter.close();
                         Usernow = null;
                         break;
 
